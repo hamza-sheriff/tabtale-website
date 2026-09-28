@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+  <title>TapTale — Smart Safety</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+
+<style id="taptale-final-auth-override">
+html, body { background:#031a35 !important; }
+/* Fix: the auth-shell display rule must not override the shared .hidden state after login. */
+#authView.auth-shell.hidden { display:none !important; }
+#dashboardView.app-shell.hidden { display:none !important; }
+#publicView.public-shell.hidden { display:none !important; }
+#authView.auth-shell {
+  min-height:100vh !important;
+  display:grid !important;
+  grid-template-columns:48% 52% !important;
+  background:linear-gradient(135deg,#03152f 0%,#06386e 48%,#0876bd 100%) !important;
+}
+#authView .auth-visual {
+  background:
+    radial-gradient(circle at 25% 20%,rgba(66,196,255,.20),transparent 26%),
+    radial-gradient(circle at 85% 85%,rgba(0,93,190,.32),transparent 34%),
+    linear-gradient(145deg,#02132b 0%,#06386e 55%,#0874b8 100%) !important;
+}
+#authView .auth-panel {
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:100vh !important;
+  padding:42px 7% !important;
+  background:
+    radial-gradient(circle at 80% 15%,rgba(77,201,255,.18),transparent 30%),
+    radial-gradient(circle at 15% 85%,rgba(0,100,210,.18),transparent 32%),
+    linear-gradient(145deg,#052b56 0%,#064b84 55%,#0872b4 100%) !important;
+}
+#authView .auth-panel::before { pointer-events:none !important; }
+#authView .auth-card {
+  position:relative !important;
+  z-index:2 !important;
+  width:min(480px,100%) !important;
+  padding:34px !important;
+  border-radius:28px !important;
+  background:linear-gradient(160deg,rgba(7,52,98,.97),rgba(3,28,58,.98)) !important;
+  border:1px solid rgba(117,211,255,.22) !important;
+  box-shadow:0 30px 90px rgba(0,0,0,.32) !important;
+  color:#fff !important;
+}
+#authView .auth-tabs {
+  background:rgba(1,18,40,.72) !important;
+  border:1px solid rgba(112,205,255,.16) !important;
+  border-radius:14px !important;
+}
+#authView .auth-tab { color:#91b9dc !important; }
+#authView .auth-tab.active {
+  color:#fff !important;
+  background:linear-gradient(135deg,#20a9ff,#0879df) !important;
+}
+#authView .section-heading h2,
+#authView .auth-form label { color:#fff !important; }
+#authView .section-heading p:last-child,
+#authView .micro-note { color:#a8c9e8 !important; }
+#authView .auth-form input {
+  box-sizing:border-box !important;
+  width:100% !important;
+  min-height:50px !important;
+  margin-top:8px !important;
+  padding:14px !important;
+  border-radius:13px !important;
+  background:#062b55 !important;
+  border:1px solid rgba(107,199,255,.20) !important;
+  color:#fff !important;
+}
+#authView .auth-form input:focus {
+  background:#073461 !important;
+  border-color:#39b5ff !important;
+  box-shadow:0 0 0 4px rgba(39,169,255,.12) !important;
+}
+#authView .auth-form input::placeholder { color:#7399bb !important; }
+#authView .btn-primary {
+  background:linear-gradient(135deg,#2aa8ff,#0878df) !important;
+  color:#fff !important;
+}
+@media(max-width:900px){
+  #authView.auth-shell { display:block !important; background:#031a35 !important; }
+  #authView .auth-visual { min-height:270px !important; }
+  #authView .auth-panel {
+    min-height:calc(100vh - 270px) !important;
+    padding:24px 18px !important;
+  }
+}
+</style>
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <section id="authView" class="auth-shell">
+    <div class="auth-visual">
+      <div class="brand brand-light"><img class="logo-img" src="taptale-logo.png" alt="TapTale logo"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">SMART SAFETY</p>
+        <h1>One tap.<br><span>One story.</span></h1>
+        <p>Keep essential family information close when it matters most.</p>
+      </div>
+      <div class="visual-chip"><span class="status-dot"></span> NFC + QR enabled</div><div class="visual-features"><span>● Instant access</span><span>● Trusted contacts</span><span>● Simple & safe</span></div>
+    </div>
+
+    <div class="auth-panel">
+      <div class="mobile-brand brand"><img class="logo-img logo-top" src="taptale-logo.png" alt="TapTale"></div>
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth="login">Log in</button>
+          <button class="auth-tab" data-auth="signup">Create account</button>
+        </div>
+
+        <div id="loginForm" class="auth-form">
+          <div class="section-heading">
+            <p class="eyebrow">WELCOME BACK</p>
+            <h2>Your safety dashboard.</h2>
+            <p>Manage your profiles and trusted contacts.</p>
+          </div>
+          <label>Email<input id="loginEmail" type="email" placeholder="you@example.com"></label>
+          <label>Password<input id="loginPassword" type="password" placeholder="••••••••"></label>
+          <button id="loginBtn" class="btn btn-primary btn-wide">Log in <span>→</span></button>
+          <p class="micro-note">Secure online accounts powered by TapTale.</p>
+        </div>
+
+        <div id="signupForm" class="auth-form hidden">
+          <div class="section-heading">
+            <p class="eyebrow">GET STARTED</p>
+            <h2>Create your TapTale account.</h2>
+            <p>Set up profiles for the people you care about.</p>
+          </div>
+          <label>Full name<input id="signupName" type="text" placeholder="Your name"></label>
+          <label>Email<input id="signupEmail" type="email" placeholder="you@example.com"></label>
+          <label>Password<input id="signupPassword" type="password" placeholder="At least 6 characters"></label>
+          <button id="signupBtn" class="btn btn-primary btn-wide">Create account <span>→</span></button>
+          <p class="micro-note">No real email is sent in this prototype.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboardView" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand brand-sidebar"><img class="logo-img logo-sidebar" src="taptale-logo.png" alt="TapTale"></div>
+      <div class="side-label">WORKSPACE</div>
+      <nav>
+        <button class="nav-item active"><span>⌂</span> Dashboard</button>
+        <button class="nav-item" id="addPersonSide"><span>＋</span> Add person</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="safe-card"><span class="safe-icon">✓</span><div><strong>Safety first</strong><small>Your profiles are ready to share.</small></div></div>
+        <button id="logoutBtn" class="logout">Log out</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="mobile-brand brand"><img class="logo-img logo-top" src="taptale-logo.png" alt="TapTale"></div>
+        <div class="user-menu"><span id="userInitial" class="avatar">T</span><span id="userName">User</span></div>
+      </header>
+
+      <div class="content">
+        <div class="dashboard-welcome"><div><span class="eyebrow">TAPTale WORKSPACE</span><h2>Your safety center</h2><p>Everything you need to manage profiles, trusted contacts, and QR access in one place.</p></div><div class="welcome-badge">● Secure workspace</div></div><div class="page-head">
+          <div>
+            <p class="eyebrow">YOUR WORKSPACE</p>
+            <h1>People & profiles</h1>
+            <p class="subtitle">Create a secure profile, add trusted contacts, and generate a QR code for the bracelet.</p>
+          </div>
+          <button id="addPersonBtn" class="btn btn-primary"><span>＋</span> Add person</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat-card"><span class="stat-icon">◉</span><div><strong id="profileCount">0</strong><small>Profiles</small></div></div>
+          <div class="stat-card"><span class="stat-icon">☎</span><div><strong id="contactCount">0</strong><small>Trusted contacts</small></div></div>
+          <div class="stat-card"><span class="stat-icon">⌁</span><div><strong id="qrCount">0</strong><small>QR codes ready</small></div></div>
+        </div>
+
+        <div id="profilesGrid" class="profiles-grid"></div>
+      </div>
+    </main>
+  </section>
+
+  <div id="profileModal" class="modal hidden">
+    <div class="modal-backdrop" data-close="profileModal"></div>
+    <div class="modal-card large">
+      <button class="modal-close" data-close="profileModal">×</button>
+      <div class="modal-head">
+        <div class="modal-icon">👤</div>
+        <div><p class="eyebrow">PROFILE SETUP</p><h2 id="modalTitle">Add a person</h2><p>Only include information you are comfortable sharing in an emergency.</p></div>
+      </div>
+      <form id="profileForm">
+        <input id="editProfileId" type="hidden">
+        <div class="form-section-title"><span class="section-number">01</span><div><strong>Person details</strong><small>Basic information for the TapTale profile</small></div></div><div class="form-grid">
+          <label>Full name<input id="personName" required placeholder="e.g. Omar Ahmed"></label>
+          <label>Age<input id="personAge" type="number" min="0" max="120" placeholder="e.g. 8"></label>
+          <label>Relationship
+            <select id="personRelation"><option>Child</option><option>Parent</option><option>Grandparent</option><option>Family member</option><option>Other</option></select>
+          </label>
+          <label>Medical note (optional)<input id="personNote" placeholder="Allergies, important note, etc."></label>
+        </div>
+
+        <div class="form-section-title contact-section-title"><span class="section-number">02</span><div><strong>Trusted contacts</strong><small>People who can be reached in an emergency</small></div></div><div class="contacts-head"><div><p class="eyebrow">EMERGENCY CONTACTS</p><h3>Trusted family contacts</h3></div><button type="button" id="addContactBtn" class="btn btn-secondary btn-small">＋ Add contact</button></div>
+        <div id="contactsEditor" class="contacts-editor"></div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" data-close="profileModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save profile <span>→</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="qrModal" class="modal hidden">
+    <div class="modal-backdrop" data-close="qrModal"></div>
+    <div class="modal-card qr-card">
+      <button class="modal-close" data-close="qrModal">×</button>
+      <p class="eyebrow">BRACELET QR</p>
+      <h2 id="qrTitle">QR code</h2>
+      <p class="subtitle">Scan this code to open the public TapTale profile.</p>
+      <div id="qrcode" class="qrcode"></div>
+      <div class="url-box" id="profileUrl"></div>
+      <div class="qr-actions">
+        <button id="downloadQrBtn" class="btn btn-primary">Download QR</button>
+        <button id="openProfileBtn" class="btn btn-secondary">Open profile ↗</button>
+      </div>
+      <p class="micro-note">For this demo, the profile URL works from the same website/browser environment. Hosting + backend are needed for a real public product.</p>
+    </div>
+  </div>
+
+  <div id="publicView" class="public-shell hidden">
+    <div class="public-top"><div class="brand brand-light"><img class="logo-img logo-small" src="taptale-logo.png" alt="TapTale logo"></div><span class="live-pill"><i></i> Safety profile</span></div>
+    <main id="publicProfile" class="public-card"></main>
+    <p class="public-footer">Powered by <strong>TapTale</strong> · One Tap. One Story.</p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
