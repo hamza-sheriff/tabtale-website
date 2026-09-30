@@ -524,3 +524,24 @@ body{min-height:100vh}
   .public-card{margin:14px!important;padding:24px!important;border-radius:22px!important}
   .public-person h1{font-size:26px!important}
 }
+
+/* v11 usability improvements */
+.page-head-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.search-wrap{display:flex;align-items:center;gap:8px;min-width:220px;height:44px;padding:0 12px;border:1px solid rgba(18,39,68,.12);border-radius:12px;background:#fff;box-shadow:0 5px 18px rgba(15,38,68,.05)}
+.search-wrap span{font-size:20px;color:#64748b}.search-wrap input{border:0;outline:0;width:100%;font:inherit;background:transparent;color:#0f172a}.search-wrap input::placeholder{color:#94a3b8}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap}.card-actions .btn{flex:1;min-width:105px}
+.btn-danger{background:#fff1f2!important;color:#be123c!important;border:1px solid #fecdd3!important}.btn-danger:hover{background:#ffe4e6!important}
+.more-btn{cursor:pointer}
+@media(max-width:700px){.page-head-actions{width:100%;justify-content:stretch}.search-wrap{flex:1;min-width:0}.page-head-actions>.btn{width:auto}.dashboard-welcome{display:none}}
+.btn:disabled{opacity:.7;cursor:not-allowed;transform:none!important}.spinner{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:tapspin .7s linear infinite;vertical-align:-2px;margin-left:5px}@keyframes tapspin{to{transform:rotate(360deg)}}
+
+/* NFC + lost-child page */
+.nfc-status{margin:14px 0;padding:12px 14px;border-radius:12px;background:#eef5ff;color:#19345f;font-weight:600;font-size:14px}
+.nfc-status.nfc-ok{background:#eaf8ef;color:#17633a}.nfc-status.nfc-unavailable{background:#fff4e8;color:#8a4d0b}
+.nfc-status + .url-box{word-break:break-all;white-space:normal}
+.lost-banner{margin-bottom:22px;padding:14px 16px;border-radius:14px;background:rgba(255,90,90,.14);border:1px solid rgba(255,120,120,.35);color:#ffe3e3;text-align:center;line-height:1.6}
+.lost-banner strong{display:block;font-size:16px;color:#fff}.lost-banner span{font-size:12px;opacity:.85}
+.public-card .call-btn{padding:12px 18px;font-size:14px}
+.share-loc{margin-top:22px;text-align:center}.share-loc h3{color:#fff;font-size:15px;margin:0 0 12px}
+.share-row{display:flex;gap:8px}.share-row .btn{flex:1;min-height:48px}
+.share-loc small{display:block;margin-top:8px;color:#98bddf;font-size:12px}

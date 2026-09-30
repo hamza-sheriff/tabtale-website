@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b1220">
+  <meta name="robots" content="noindex,nofollow">
   <title>TapTale — Smart Safety</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
 
+<script>if(new URLSearchParams(location.search).get("profile"))document.documentElement.classList.add("public-mode");</script>
 <style id="taptale-final-auth-override">
+html.public-mode #authView, html.public-mode #dashboardView { display:none !important; }
 html, body { background:#031a35 !important; }
 /* Fix: the auth-shell display rule must not override the shared .hidden state after login. */
 #authView.auth-shell.hidden { display:none !important; }
@@ -174,7 +177,7 @@ html, body { background:#031a35 !important; }
             <h1>People & profiles</h1>
             <p class="subtitle">Create a secure profile, add trusted contacts, and generate a QR code for the bracelet.</p>
           </div>
-          <button id="addPersonBtn" class="btn btn-primary"><span>＋</span> Add person</button>
+          <div class="page-head-actions"><div class="search-wrap"><span>⌕</span><input id="profileSearch" type="search" placeholder="Search people..."></div><button id="addPersonBtn" class="btn btn-primary"><span>＋</span> Add person</button></div>
         </div>
 
         <div class="stats">
@@ -212,9 +215,26 @@ html, body { background:#031a35 !important; }
 
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" data-close="profileModal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save profile <span>→</span></button>
+          <button type="submit" id="saveProfileBtn" class="btn btn-primary">Save profile <span>→</span></button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div id="nfcModal" class="modal hidden">
+    <div class="modal-backdrop" data-close="nfcModal"></div>
+    <div class="modal-card qr-card">
+      <button class="modal-close" data-close="nfcModal">×</button>
+      <p class="eyebrow">TAPTale NFC</p>
+      <h2 id="nfcTitle">NFC tag</h2>
+      <p class="subtitle">اكتب الرابط ده على تاج الـ NFC اللي جوه الحظاظة. أي تليفون يقرّبه هيفتح صفحة الطفل.</p>
+      <div class="nfc-status" id="nfcStatus">NFC ready</div>
+      <div class="url-box" id="nfcUrl"></div>
+      <div class="qr-actions">
+        <button id="writeNfcBtn" class="btn btn-primary">Write to NFC tag</button>
+        <button id="copyNfcBtn" class="btn btn-secondary">Copy link</button>
+      </div>
+      <p class="micro-note">الكتابة من الموقع بتشتغل على Chrome في أندرويد (HTTPS + NFC شغال). لو مش متاحة: انسخ الرابط واكتبه بتطبيق NFC Tools واختار Write &gt; Add a record &gt; URL.</p>
     </div>
   </div>
 
@@ -231,7 +251,7 @@ html, body { background:#031a35 !important; }
         <button id="downloadQrBtn" class="btn btn-primary">Download QR</button>
         <button id="openProfileBtn" class="btn btn-secondary">Open profile ↗</button>
       </div>
-      <p class="micro-note">For this demo, the profile URL works from the same website/browser environment. Hosting + backend are needed for a real public product.</p>
+      <p class="micro-note">Your QR opens this profile directly from the hosted TapTale site.</p>
     </div>
   </div>
 
